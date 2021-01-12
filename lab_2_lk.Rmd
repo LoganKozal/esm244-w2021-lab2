@@ -1,0 +1,54 @@
+---
+title: "ESM 244 Lab 2"
+author: "Logan Kozal"
+date: "1/12/2021"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(janitor)
+library(here)
+library(palmerpenguins)
+
+#for PCA
+library(ggfortify) #pca biplots
+
+#for ggplot customization
+library(readxl) #read in from other excel
+library(gghighlight) 
+library(lubridate)
+library(plotly) #interactive graph
+
+#to make compound figures
+library(patchwork)
+```
+
+## Part 1: PCA with penguins
+
+```{r}
+#wrangle to just variables for PCA and scale
+penguin_pca <- penguins %>% 
+  select(body_mass_g, ends_with("_mm")) %>% 
+  drop_na() %>% 
+  scale() %>% 
+  prcomp() 
+
+penguin_pca$rotation #these are the loadings
+
+#need observations to match those of the PCS but still contain other variables (species)
+
+penguin_complete <- penguins %>% 
+  drop_na(body_mass_g, ends_with("_mm"))
+
+#recognize type of data and assume what type of plot to make
+autoplot(penguin_pca, data = penguin_complete,
+         colour = 'species',
+         loadings = TRUE, 
+         loadings.label = TRUE) +
+  theme_minimal()
+
+```
+
+
